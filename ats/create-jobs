@@ -1,0 +1,60 @@
+#/bin/bash
+
+function create_job() {
+  JWT=$1
+  #JWT=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNpZy1ycy0wIn0.eyJzdWIiOiIyOWI5ZWYwYi0yZDNjLTU0MzctYjRhNy0xYzJhNjAxYWQxYzYiLCJ0eXBlIjoiSWRUb2tlbiIsInNjb3BlIjoib3BlbmlkIGVtYWlsIGFjY291bnQgcGVybWlzc2lvbnMgcm9sZXMgcHJvdmlkZXIgcHJvZmlsZSIsImVtYWlsIjoibmF0YWxpZS53b3JrYWJsZUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYWNjX3VpZCI6ImViZTdjNTc4LWU1MDgtNTIzMi1hZWQxLWIxYTdhNjY5MjJmYSIsImFjY19uYW1lIjoiVGF4aWJlYXQiLCJhY2Nfc3ViZG9tYWluIjoidGF4aWJlYXQiLCJwZXJtaXNzaW9ucyI6InBzOnByb2ZpbGVzOm1hbmFnZSBhdHM6Y2FuZGlkYXRlczpyZWZlciBhdHM6am9iczpyZWFkIGF0czpqb2JzOndyaXRlIGF0czpjYW5kaWRhdGVzOnJlYWQgYXRzOmNhbmRpZGF0ZXM6d3JpdGUiLCJyb2xlcyI6InBzLnVzZXIgYXRzLmFkbWluIiwicGRyIjoiZ29vZ2xlIGxpbmtlZGluIGxvY2FsIiwiY19wZHIiOm51bGwsIm5hbWUiOiJOYXRhbGllIFN1bmciLCJmaXJzdG5hbWUiOiJOYXRhbGllIiwibGFzdG5hbWUiOiJTdW5nIiwicGljdHVyZV91cmwiOm51bGwsImF0X2hhc2giOiI2b2U0R1pFYzlmUmYydmpoeWVXMV93IiwiYXVkIjoiYXRzX3BheWdvX2RldiIsImV4cCI6MTU2NzcyNjYyNiwiaWF0IjoxNTY3NjkwNjI2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.U-wm7zGx5lr9pNfv3xQjRNjsG-5i2YUQFxXAXDOhV7z3y4FcTEdvcRblMIU05em3evbXbK2DO_FXHGLcFTXmsQu0-Tj1xDPYMPlxp-cx3sZ2SsK8eHb7iaXR-CMwXqkz5ZVULuBaVLS78IIgAnT2k0mhDWppNAQUt5rFzqPGq-dmwR9C6fWB1dQ3JnPkSCqeqrpbwwm13tVjFb8UDpDA8ZFMwn5ht8yZv_BmrvptydhVuGOYzB9Sn5qXboKmbZ27T3CHP0zqkeRodO7VUAu79RKKq4QxY6WUuUXASQ4_4g_3f54w6dOEvVRiYnu9JwwzmRNS_akRjaEnykOTaFKLLA
+
+  curl -X POST \
+  http://lvh.me:3000/ats/api/jobs \
+  -H 'Accept: */*' \
+  -H 'Accept-Encoding: gzip, deflate' \
+  -H "Authorization: Bearer ${JWT}" \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Length: 683' \
+  -H 'Content-Type: application/json' \
+  -H 'Host: lvh.me:3000' \
+  -H 'Postman-Token: e9cc3369-13ca-4713-8814-b2d37f9518de,dcabe995-b8b5-4ae1-9154-6261507b5e3d' \
+  -H 'User-Agent: PostmanRuntime/7.16.3' \
+  -H 'cache-control: no-cache' \
+  -d '{
+  "data":{
+    "type":"job",
+    "attributes":{
+      "title":"Senior Software Engineer",
+      "description":"Java, Ruby, Node languages",
+      "requirement_summary":"6 years of experience",
+      "benefit_summary":"6 years of experience",
+      "industry":"Engineering",
+      "country_code":"GR",
+      "state_code":"Draft",
+      "city":"Athens",
+      "salary_from" : 10000,
+      "salary_to" : 100000,
+      "keywords":[
+		"Docker", "Git", "PostgreSQL"
+      ]
+    },
+    "relationships":{
+      "account":{
+        "data":{
+          "id":"8725850",
+          "type":"account"
+        }
+      }
+    }
+  },
+  "meta":{
+    "ctx": "6a7faad0-bf7e-4ecf-8c91-676d47105d58"
+  }
+ }'
+}
+
+
+for job in `eval echo {1..$1}`
+do
+  printf "\n${job}. Creating.. "
+  create_job $2
+  echo ""
+done
+
