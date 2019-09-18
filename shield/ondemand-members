@@ -1,3 +1,5 @@
+-- Usage: psql -h localhost -U postgres -d shield_development -f shield/ondemand-members
+
 -- Insert OnDemand role on accounts
 with ats_roles AS (
     SELECT distinct role_id
