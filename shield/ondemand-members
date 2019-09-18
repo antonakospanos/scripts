@@ -1,0 +1,56 @@
+-- Insert OnDemand role on accounts
+with ats_roles AS (
+    SELECT distinct role_id
+    from application_roles
+    where application_id = 'ats'
+),
+ats_accounts AS (
+    SELECT distinct account_id
+    from account_roles r
+    inner join ats_roles ar on r.role_id = ar.role_id
+),
+ondemand_roles AS (
+    SELECT role_id
+    from application_roles
+    where application_id = 'ondemand'
+),
+ondemand_accounts AS (
+    SELECT account_id, role_id
+    from ats_accounts
+    cross join ondemand_roles
+)
+INSERT INTO account_roles (account_id, role_id)
+SELECT *
+FROM ondemand_accounts;
+
+-- Insert OnDemand Memberships
+with ats_roles AS (
+    SELECT distinct role_id
+    from application_roles
+    where application_id = 'ats'
+),
+ats_accounts AS (
+    SELECT distinct account_id
+    from account_roles r
+    inner join ats_roles ar on r.role_id = ar.role_id
+),
+ats_users AS (
+    SELECT distinct m.user_id, m.account_id
+    from memberships m
+    inner join ats_accounts a on a.account_id = m.account_id
+),
+ondemand_roles AS (
+    SELECT role_id
+    from application_roles
+    where application_id = 'ondemand'
+),
+ondemand_members AS (
+    SELECT u.user_id, a.account_id, r.role_id
+    from ats_users u
+    inner join ats_accounts a on a.account_id = u.account_id
+    cross join ondemand_roles r
+)
+
+INSERT INTO memberships (user_id, account_id, role_id)
+SELECT *
+FROM ondemand_members;
