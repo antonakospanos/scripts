@@ -1,0 +1,53 @@
+#!/bin/bash
+
+ARGS=("$@")
+ENVS=(workablestg1 workablestg2 workablestg3 workablestg4 workablestg5 workablestg6 workablestg7 workablestg8 workablestg9 workablestg10 workableperf mobilestg1 higherstack officedroid)
+CONFIG=releases/ats.yml
+
+function checkout {
+  git checkout $1 2>/dev/null || git checkout -b $1 --track origin/$1
+}
+
+# Iterate argued environmnet variables
+function config {
+  for ARG in ${ARGS[@]}
+  do
+    # Remove all conflicting variables and update the new one
+    KEY=`echo $ARG | cut -d ':' -f 1`
+    grep -v $KEY: $CONFIG > $CONFIG
+    sed -ie "s/^[[:blank:]]*config:[[:blank:]]*$/\
+$ARG/" $CONFIG
+  done
+}
+
+function sorting {
+/usr/bin/env ruby <<RUBY
+require 'YAML'
+
+def convert_hash_to_ordered_hash_and_sort(object, deep = false)
+  if object.is_a?(Hash)
+    res = Hash.new.tap { |map| object.each {|k, v| map[k] = deep ? convert_hash_to_ordered_hash_and_sort(v, deep) : v } }
+    return res.class[res.sort {|a, b| a[0].to_s <=> b[0].to_s } ]
+  elsif deep && object.is_a?(Array)
+    array = Array.new
+    object.each_with_index {|v, i| array[i] = convert_hash_to_ordered_hash_and_sort(v, deep) }
+    return array
+  else
+    return object
+  end
+end
+
+hash = YAML.load_file(ENV['CONFIG'])
+sorted_hash = convert_hash_to_ordered_hash_and_sort(hash, true)
+File.open("#{ENV['CONFIG']}", 'w+') {|f| f.write(sorted_hash.to_yaml) }
+RUBY
+}
+
+# Iterate Workable staging environments
+for ENV in ${ENVS[@]}
+do
+  checkout $ENV
+  config
+  sorting 
+  git commit -am "ADD: Bulk configuration" -m "Environment Variables:\n$ARGS" # && git push origin $1
+done
