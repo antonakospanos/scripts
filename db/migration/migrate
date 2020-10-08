@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Parse args
+if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
+  echo "migrate '$1' '$2' '$3' is not a valid command, please pass as the first argument the schema, as the second one the source DB URL and as the third argument the target DB_URL!"
+  exit 1
+fi
+DB_SCHEMA=$1
+DB_SOURCE_URL=$2
+DB_TARGET_URL=$2
+
+./dump $DB_SCHEMA $DB_SOURCE_URL
+./resore $DB_SCHEMA $DB_TARGET_URL

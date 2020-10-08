@@ -1,0 +1,9 @@
+psql $DB_TARGET_URL
+
+# Rename recommender to porch user and grant missing access to master user
+ALTER USER recommender RENAME TO porch;
+GRANT ALL PRIVILEGES ON SCHEMA porch to master;
+GRANT ALL PRIVILEGES ON ALL TABLES IN schema porch to master;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN schema porch to master;
+\du+
+\dn+

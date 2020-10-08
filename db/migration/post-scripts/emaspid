@@ -1,0 +1,10 @@
+psql $DB_TARGET_URL
+
+# Create emaspid user and grants access to emaspid schema
+SELECT md5(random()::text);
+CREATE USER emaspid WITH ENCRYPTED PASSWORD '***';
+\du+
+GRANT ALL PRIVILEGES ON SCHEMA emaspid to emaspid;
+GRANT ALL PRIVILEGES ON ALL TABLES IN schema emaspid to emaspid;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN schema emaspid to emaspid;
+\dn+

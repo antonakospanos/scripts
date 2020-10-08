@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Parse args
+if [[ -z "$1" || -z "$2" ]]; then
+  echo "restore '$1' '$2' is not a valid command, please pass as the first argument the source directory and as the second one the target DB URL!"
+  exit 1
+fi
+DB_SOURCE_DIR=$1
+DB_TARGET_URL=$2
+
+START=$(date +%s);
+echo "Restoring schema $DB_SOURCE_DIR to $DB_TARGET_URL.."
+# pg_restore --verbose -d $DB_TARGET_URL $DB_SOURCE_DIR
+pg_restore --verbose -d $DB_TARGET_URL --jobs 8 --format=d $DB_SOURCE_DIR
+END=$(date +%s);
+echo $((END-START)) | awk '{print "Restore of $DB_SOURCE_DIR completed in " int($1/60)" minutes and "int($1%60)" seconds"}'
