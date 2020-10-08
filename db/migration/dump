@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Parse args
+if [[ -z "$1" || -z "$2" ]]; then
+  echo "dump '$1' '$2' is not a valid command, please pass as the first argument the source schema and as the second one the DB URL!"
+  exit 1
+fi
+DB_SOURCE_SCHEMA=$1
+DB_SOURCE_URL=$2
+
+START=$(date +%s);
+echo "Dumping schema $DB_SOURCE_SCHEMA from $DB_SOURCE_URL.."
+# pg_dump -n $DB_SOURCE_SCHEMA $DB_SOURCE_URL -Fc > $DB_SOURCE_SCHEMA.tar
+pg_dump --verbose --compress 0 --jobs 8 --format=d --file $DB_SOURCE_SCHEMA -n $DB_SOURCE_SCHEMA $DB_SOURCE_URL
+END=$(date +%s);
+echo $((END-START)) | awk '{print "Dump of ${DB_SOURCE_SCHEMA} completed in " int($1/60)" minutes and "int($1%60)" seconds"}'
